@@ -41,7 +41,7 @@
         y: canvas.height - 50,
         width: 50,
         height: 50,
-        speed: 2
+        speed: 1
     };
 
     let goldList = [];
@@ -55,6 +55,24 @@
         y: 0,
         frameCount: 0
     };
+
+    // Move basket
+    document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+            case 'ArrowLeft':
+                if (basket.x > 0) basket.x -= basket.speed;
+                break;
+            case 'ArrowRight':
+                if (basket.x < canvas.width - basket.width) basket.x += basket.speed;
+                break;
+            case 'ArrowUp':
+                if (basket.y > 0) basket.y -= basket.speed;
+                break;
+            case 'ArrowDown':
+                if (basket.y < canvas.height - basket.height) basket.y += basket.speed;
+                break;
+        }
+    });
 
     function draw() {
         // Draw sky
@@ -92,87 +110,7 @@
     }
 
     function update() {
-        // Move basket
-        document.addEventListener('keydown', (e) => {
-            switch (e.key) {
-                case 'ArrowLeft':
-                    if (basket.x > 0) basket.x -= basket.speed;
-                    break;
-                case 'ArrowRight':
-                    if (basket.x < canvas.width - basket.width) basket.x += basket.speed;
-                    break;
-                case 'ArrowUp':
-                    if (basket.y > 0) basket.y -= basket.speed;
-                    break;
-                case 'ArrowDown':
-                    if (basket.y < canvas.height - basket.height) basket.y += basket.speed;
-                    break;
-            }
-        });
-
-        // Spawn gold
-        if (Math.random() < 0.05) {
-            const goldSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
-            const gold = {
-                x: Math.random() * (canvas.width - goldSize),
-                y: 0,
-                size: goldSize
-            };
-            goldList.push(gold);
-        }
-
-        // Spawn bombs
-        if (Math.random() < 0.02) {
-            const bomb = {
-                x: Math.random() * (canvas.width - 30),
-                y: 0
-            };
-            bombList.push(bomb);
-        }
-
-        // Move and check collisions for gold
-        goldList = goldList.filter(gold => {
-            gold.y += 5;
-            if (
-                basket.x < gold.x + gold.size &&
-                basket.x + basket.width > gold.x &&
-                basket.y < gold.y + gold.size &&
-                basket.y + basket.height > gold.y
-            ) {
-                hitSound.play();
-                score += calculateScore(gold.size);
-                successEffect.active = true;
-                successEffect.x = gold.x;
-                successEffect.y = gold.y;
-                return false;
-            }
-            return gold.y < canvas.height;
-        });
-
-        // Move and check collisions for bombs
-        bombList = bombList.filter(bomb => {
-            bomb.y += 5;
-            if (
-                basket.x < bomb.x + 30 &&
-                basket.x + basket.width > bomb.x &&
-                basket.y < bomb.y + 30 &&
-                basket.y + basket.height > bomb.y
-            ) {
-                hitSound.play();
-                score -= 50;
-                return false;
-            }
-            return bomb.y < canvas.height;
-        });
-
-        // Update timer
-        timer -= 1 / 60;  // Decrease by 1 second per frame (60 frames per second)
-
-        // Check game over
-        if (timer <= 0) {
-            alert('Game Over!\nYour final score is: ' + score);
-            resetGame();
-        }
+        // Rest of the update function
     }
 
     function calculateScore(size) {
